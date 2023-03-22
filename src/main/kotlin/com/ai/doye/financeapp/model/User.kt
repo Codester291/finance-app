@@ -1,22 +1,22 @@
 package com.ai.doye.financeapp.model
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 
 @Entity
-class User(
+data class User(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         val id: Long,
         var username: String,
         var firstName: String,
-        var lastName: String
+        var lastName: String,
 
-//        @OneToOne(fetch = FetchType.LAZY,
-//                cascade = [CascadeType.ALL],
-//                mappedBy = "user")
-//        val account: Account?
+        @OneToOne(mappedBy = "user")
+        @JsonManagedReference
+        var account: Account?
 ) {
-        constructor() : this(1L, "", "", "")
+        constructor() : this(1L, "", "", "", null)
 
         fun fullName(): String {
                 return "$firstName $lastName"

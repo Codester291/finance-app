@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(
         var userRepository: UserRepository,
+        val accountService: AccountService,
         val logger: KLogger = KotlinLogging.logger {}
 ) {
 
@@ -20,12 +21,18 @@ class UserService(
             user.firstName = userDTO.firstName
             user.lastName = userDTO.lastName
             user.username = userDTO.username
-            //TODO: call a createAccount(User) method
 
-            ResponseDTO("00", "Success", userRepository.save(user))
+            val persistUser = userRepository.save(user)
+            if (!accountService.createAccount(persistUser))
+                ResponseDTO("99", "Could not register user at the moment")
+            ResponseDTO("00", "Success", persistUser)
         } catch (e: Exception) {
-            logger.info("Error occurred in {}", e.message)
+            logger.info("Error occurred in [createUser] method{}", e.message)
             ResponseDTO("XX", "Could not register user at the moment, please try again in few minutes")
         }
+    }
+
+    fun fetchUsers(): Any {
+        return userRepository.findAll()
     }
 }
