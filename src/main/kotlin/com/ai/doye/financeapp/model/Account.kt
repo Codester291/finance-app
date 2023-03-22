@@ -1,19 +1,21 @@
 package com.ai.doye.financeapp.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
 
 @Entity
-class Account (
+data class Account (
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         val id: Long,
 
-        val accountNo: String,
-        val balance: Double
+        var accountNo: String,
+        var balance: Double,
 
-//        @OneToOne(fetch = FetchType.LAZY, optional = false)
-//        @JoinColumn(name = "user_id", nullable = false)
-//        val user: User?
+        @OneToOne
+        @JoinColumn(name = "user_id", referencedColumnName = "id")
+        @JsonBackReference
+        var user: User?
 ) {
-        constructor() : this(1L, "", 0.0)
+        constructor() : this(1L, "", 0.0, null)
 }
